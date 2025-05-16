@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Online Book Reader Anay R&P </title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f5f7fa;
+    color: #333;
+  }
+  header {
+    background-image:url("https://png.pngtree.com/background/20230613/original/pngtree-room-with-lots-of-books-on-shelves-picture-image_3424122.jpg");
+    color: #fff;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+  main {
+    max-width: 1200px;
+    margin: 2rem auto 4rem auto;
+    padding: 0 1rem;
+  }
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+    gap: 1.5rem;
+  }
+  .book-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgb(63 81 181 / 0.15);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    user-select: none;
+  }
+  .book-card:hover, .book-card:focus {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 30px rgb(63 81 181 / 0.3);
+    outline: none;
+  }
+  .book-thumb {
+    flex-shrink: 0;
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-bottom: 3px solid #3f51b5;
+    transition: transform 0.3s ease;
+  }
+  .book-card:hover .book-thumb {
+    transform: scale(1.05);
+  }
+  .book-title {
+    padding: 1rem 1rem 1.5rem 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-grow: 1;
+    color: #3f51b5;
+    text-align: center;
+  }
+
+  /* PDF viewer overlay */
+  #pdf-viewer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 15, 15, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    padding: 1rem;
+  }
+  #pdf-viewer-overlay.active {
+    display: flex;
+  }
+  #pdf-viewer {
+    flex-grow: 1;
+    width: 90vw;
+    max-width: 900px;
+    height: 85vh;
+    border: none;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    border-radius: 10px;
+    background: white;
+  }
+  #close-btn {
+    align-self: flex-end;
+    background: #f44336;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background 0.3s ease;
+  }
+  #close-btn:hover {
+    background: #d32f2f;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  /* Scrollbar styling for iframe */
+  #pdf-viewer::-webkit-scrollbar {
+    width: 12px;
+  }
+  #pdf-viewer::-webkit-scrollbar-thumb {
+    background-color: #3f51b5;
+    border-radius: 6px;
+  }
+  @media (max-width: 600px){
+    .book-thumb {
+      height: 200px;
+    }
+  }
+</style>
+</head>
+<body>
+  <header class="header-container">
+    <h1>ᗰY ᗷӨӨK 𝚜𝚝𝚘𝚛𝚎</h1>
+   <div class="name">αηαу я&ρ</div>
+  </header>
+<main>
+  <div class="book-grid" id="bookGrid">
+    <!-- Book cards injected by JS -->
+  </div>
+</main>
+
+<!-- PDF Viewer Modal -->
+<div id="pdf-viewer-overlay" role="dialog" aria-modal="true" aria-labelledby="pdf-viewer-title">
+  <button id="close-btn" aria-label="Close PDF viewer">Close &times;</button>
+  <iframe id="pdf-viewer" title="Book PDF viewer"></iframe>
+</div>
+
+<footer>
+  &copy; 2025 My Book Store. All rights reserved.
+</footer>
+
+<script>
+  // Sample book data with public domain PDF URLs and thumbnails
+  const books = [
+    {
+      title: "Zero to one",
+      thumbnail: "https://cdn.prod.website-files.com/63c5e29f1b5bc83fe0af2489/675ecc485fafbd1f37a0ecaa_66f8469121f12be1286d0436_66a060c15985a06c09d48282_Zero%252520to%252520one.jpeg",
+      pdf: "https://dspace.sxcjpr.edu.in/jspui/bitstream/123456789/1353/1/zero%20to%20one.pdf"
+    },
+    {
+      title: "48 LAW OF POWER",
+      thumbnail: "https://rukminim2.flixcart.com/image/850/1000/xif0q/book/v/f/y/power-the-48-laws-paperback-import-1-december-1999-original-imagx3afkjkzq5cz.jpeg?q=90&crop=false",
+      pdf: "https://cdn.oujdalibrary.com/books/575/575-the-48-laws-of-power-(www.tawcer.com).pdf"
+    },
+    {
+      title: "Ogilvy on advertising",
+      thumbnail: "https://media.licdn.com/dms/image/v2/D4D12AQEfv864Geh4Pg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1668261251048?e=2147483647&v=beta&t=_pGC1Q-ZBMbDsfQKnM2X5kBdYylV8jYh6EW4mvNq9Hk",
+      pdf: "https://books.google.com/books?id=cX_gEAAAQBAJ&printsec=frontcover&source=entity_page&newbks=0&hl=en&ovdme=1&ovso=1&ved=2ahUKEwjI9Ijy9KeNAxWoTGwGHZgYGv4Q4KgFegQIBRAA"
+    },
+    {
+      title: "Phychology Of Money",
+      thumbnail: "https://files.selar.co/product-images/2024/products/digital-bookshelf1/the-psychology-of-money-e-selar.co-660e698c14e00.jpeg",
+      pdf: "https://inspiredbyislam.wordpress.com/wp-content/uploads/2022/08/the-psychology-of-money-timeless-lessons-on-wealth-greed-and-happiness-morgan-housel-z-lib.org_.pdf"
+    },
+    {
+      title: "RATAN TATA Sir Biograpy",
+      thumbnail: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkDaBtLrBPpl8gBmnTgGMWmLjcYyczN2t-Xg&s",
+      pdf: "https://zoroastrians.net/wp-content/uploads/2021/08/The-TATAS.pdf"
+    }
+  ];
+
+  const bookGrid = document.getElementById('bookGrid');
+  const pdfViewerOverlay = document.getElementById('pdf-viewer-overlay');
+  const pdfViewer = document.getElementById('pdf-viewer');
+  const closeBtn = document.getElementById('close-btn');
+
+  function createBookCard(book, index) {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-pressed', 'false');
+    card.setAttribute('aria-label', `Open book: ${book.title}`);
+    card.addEventListener('click', () => openBook(index));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openBook(index);
+      }
+    });
+
+    const img = document.createElement('img');
+    img.className = 'book-thumb';
+    img.src = book.thumbnail;
+    img.alt = `Thumbnail of ${book.title}`;
+
+    const title = document.createElement('div');
+    title.className = 'book-title';
+    title.textContent = book.title;
+
+    card.appendChild(img);
+    card.appendChild(title);
+    return card;
+  }
+
+  function openBook(index) {
+    const book = books[index];
+    pdfViewer.src = book.pdf;
+    pdfViewerOverlay.classList.add('active');
+    closeBtn.focus();
+  }
+
+  function closeBook() {
+    pdfViewerOverlay.classList.remove('active');
+    pdfViewer.src = '';
+    // Return focus to books grid
+    bookGrid.querySelector('.book-card').focus();
+  }
+
+  closeBtn.addEventListener('click', closeBook);
+  closeBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeBook();
+    }
+  });
+
+  // Populate the book grid on page load
+  function init() {
+    books.forEach((book, index) => {
+      bookGrid.appendChild(createBookCard(book, index));
+    });
+  }
+
+  window.addEventListener('load', init);
+</script>
+</body>
+</html>
+
