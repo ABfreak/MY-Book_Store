@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Create search by html css and javascript</title>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>My Book Store</title>
-<style>
+<style type="text/css">
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  main
+		{
+			width: 100%;
+			height: auto;
+			background: #fdffff;
+			padding: 4rem 4%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+		main form input
+		{
+			width: 30rem;
+			padding: .5rem;
+			height: 3rem;
+			letter-spacing: 2px;
+			background: #f8f8f8;
+		}
+		main form input[type="submit"]
+		{
+			width: 10rem;
+			cursor: pointer;
+			color: #fff;
+			background:#3f51b5;
 
   * {
     box-sizing: border-box;
@@ -147,6 +175,12 @@
 <main>
   <div class="book-grid" id="bookGrid">
     <!-- Book cards injected by JS -->
+     <form>
+			<input type="text" name="" placeholder="What do you want?" id="myinput">
+			<input type="submit" name="" value="Search...">
+		</form>
+
+    <div class="cotainer">
   </div>
 </main>
 
